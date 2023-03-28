@@ -10,7 +10,7 @@ interface ApiController
 
     public function singleItem();
 
-    public function paginate();
+    public function paginated();
 
     public function noContent();
 
@@ -23,4 +23,6 @@ interface ApiController
     public function errorForbidden($message);
 
     public function errorUnauthorized($message);
+
+    public function translate(String $key);
 }

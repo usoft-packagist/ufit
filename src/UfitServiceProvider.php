@@ -3,6 +3,7 @@
 namespace Usoft\Ufit;
 
 use Illuminate\Support\ServiceProvider;
+use Usoft\Ufit\Middlewares\LocaleMiddleware;
 
 class UfitServiceProvider extends ServiceProvider
 {
@@ -65,8 +66,9 @@ class UfitServiceProvider extends ServiceProvider
 //            __DIR__.'/config' => config_path('vendor/yk/laravel-package-example'),
 //        ]);
 //
-//        $kernel = $this->app['Illuminate\Contracts\Http\Kernel'];
+        $kernel = $this->app['Illuminate\Contracts\Http\Kernel'];
 //        $kernel->pushMiddleware('Yk\LaravelPackageExample\App\Http\Middleware\MiddlewareExample');
+        $kernel->pushMiddleware(LocaleMiddleware::class);
 
         /**
          * Register migrations, so they will be automatically run when the php artisan migrate command is executed.
