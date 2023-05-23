@@ -1,6 +1,6 @@
 <?php
 
-namespace Usoft\Ufit\Abstracts\Http;
+namespace Usoft\Ufit\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 

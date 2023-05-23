@@ -6,6 +6,9 @@ use Illuminate\Foundation\Http\FormRequest as BaseFormRequest;
 use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Validation\ValidationException;
 use Illuminate\Http\Response;
+use Usoft\Ufit\Requests\PaginationRequest;
+use Usoft\Ufit\Requests\SearchRequest;
+use Usoft\Ufit\Requests\UserRequest;
 
 abstract class FormRequest extends BaseFormRequest
 {

@@ -12,8 +12,9 @@ use Usoft\Ufit\Abstracts\Exceptions\CreateException;
 use Usoft\Ufit\Abstracts\Exceptions\UpdateException;
 use Usoft\Ufit\Abstracts\Jobs\StoreJob;
 use Usoft\Ufit\Abstracts\Jobs\UpdateJob;
+use Usoft\Ufit\Interfaces\ServiceInterface;
 
-abstract class Service
+abstract class Service implements ServiceInterface
 {
     protected Model $model;
     protected array $data;
