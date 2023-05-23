@@ -57,20 +57,20 @@ abstract class ApiBaseController implements ApiController
         ], $status_code);
     }
 
-    public function errorNotFound($message = 'Not Found'){
-        return $this->error($message, 404);
+    public function errorNotFound($message = 'Not Found', $exception=null){
+        return $this->error($message, 404, $exception);
     }
 
-    public function errorBadRequest($message = 'Bad Request'){
-        return $this->error($message, 400);
+    public function errorBadRequest($message = 'Bad Request', $exception=null){
+        return $this->error($message, 400, $exception);
     }
 
-    public function errorForbidden($message = 'Forbidden'){
-        return $this->error($message, 403);
+    public function errorForbidden($message = 'Forbidden', $exception=null){
+        return $this->error($message, 403, $exception);
     }
 
-    public function errorUnauthorized($message = 'Unauthorized'){
-        return $this->error($message, 401);
+    public function errorUnauthorized($message = 'Unauthorized', $exception=null){
+        return $this->error($message, 401, $exception);
     }
 
     public function translate(String $key)

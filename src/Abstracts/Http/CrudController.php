@@ -2,18 +2,17 @@
 
 namespace Usoft\Ufit\Abstracts\Http;
 
-use Illuminate\Support\Facades\Lang;
-use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Request;
 use Usoft\Ufit\Abstracts\CrudService;
 use Usoft\Ufit\Abstracts\Exceptions\CreateException;
 use Usoft\Ufit\Abstracts\Exceptions\NotFoundException;
 use Usoft\Ufit\Abstracts\Exceptions\UpdateException;
-use Usoft\Ufit\Abstracts\Model;
 use Usoft\Ufit\Abstracts\Service;
 use Usoft\Ufit\Requests\DestroyRequest;
 use Usoft\Ufit\Requests\PaginationRequest;
 use Usoft\Ufit\Requests\ShowRequest;
+use Usoft\Ufit\Responses\ClientItemResource;
+use Usoft\Ufit\Responses\ItemResource;
 
 abstract class CrudController extends ApiBaseController
 {
@@ -35,8 +34,8 @@ abstract class CrudController extends ApiBaseController
     {
         try {
             $items = $this->service->getQuery()->pagiante($request->limit);
-        } catch (\Exception $exception) {
-            return $this->error($exception->getMessage(), 400, $exception);
+        } catch (\Exception $th) {
+            return $this->errorBadRequest($th->getMessage(), $th);
         }
         return $this->paginated($items, ItemResource::class);
     }
@@ -44,15 +43,15 @@ abstract class CrudController extends ApiBaseController
     public function show(ShowRequest $request)
     {
         try {
-            $organization = $this->service
+            $item = $this->service
                 ->setById($request->id)
                 ->get();
         } catch (NotFoundException $th) {
-            return $this->error($th->getMessage(), 400);
+            return $this->errorNotFound($th->getMessage(), $th);
         } catch (\Exception $th) {
-            return $this->error($th->getMessage(), 400);
+            return $this->errorBadRequest($th->getMessage(), $th);
         }
-        return $this->singleItem(Resource::class, $organization);
+        return $this->singleItem(ItemResource::class, $item);
     }
 
     /**
@@ -64,13 +63,13 @@ abstract class CrudController extends ApiBaseController
     public function store(Request $request)
     {
         try {
-            $organization = $this->service->create($request->validated())->get();
+            $item = $this->service->create($request->validated())->get();
         } catch (CreateException $th) {
-            return $this->error($th->getMessage(), 400);
+            return $this->errorBadRequest($th->getMessage(), $th);
         } catch (\Exception $th) {
-            return $this->error($th->getMessage(), 400);
+            return $this->errorBadRequest($th->getMessage(), $th);
         }
-        return $this->singleItem(Resource::class, $organization, 201);
+        return $this->created(ItemResource::class, $item);
     }
 
     /**
@@ -82,17 +81,17 @@ abstract class CrudController extends ApiBaseController
     public function update(Request $request)
     {
         try {
-            $organization = $this->service
+            $item = $this->service
                 ->setById($request->id)
                 ->update($request->validated())->get();
         } catch (UpdateException $th) {
-            return $this->error($th->getMessage(), 400);
+            return $this->errorBadRequest($th->getMessage(), $th);
         } catch (NotFoundException $th) {
-            return $this->error($th->getMessage(), 400);
+            return $this->errorNotFound($th->getMessage(), $th);
         } catch (\Exception $th) {
-            return $this->error($th->getMessage(), 400);
+            return $this->errorBadRequest($th->getMessage(), $th);
         }
-        return $this->singleItem(Resource::class, $organization, 202);
+        return $this->accepted(ItemResource::class, $item);
     }
 
     /**
@@ -106,9 +105,9 @@ abstract class CrudController extends ApiBaseController
         try {
             $this->service->setById($request->id)->get()->delete();
         } catch (NotFoundException $th) {
-            return $this->error($th->getMessage(), 400);
+            return $this->errorNotFound($th->getMessage(), $th);
         } catch (\Exception $th) {
-            return $this->error($th->getMessage(), 400);
+            return $this->errorBadRequest($th->getMessage(), $th);
         }
         return $this->noContent();
     }
@@ -119,22 +118,22 @@ abstract class CrudController extends ApiBaseController
     {
         try {
             $items = $this->service->getQuery()->pagiante($request->limit);
-        } catch (\Exception $exception) {
-            return $this->error($exception->getMessage(), 400, $exception);
+        } catch (\Exception $th) {
+            return $this->errorBadRequest($th->getMessage(), $th);
         }
-        return $this->paginated($items, ItemClientResource::class);
+        return $this->paginated($items, ClientItemResource::class);
     }
 
     public function findOne(ShowRequest $request)
     {
         try {
-            $organization = $this->service->setById($request->id)->get();
+            $item = $this->service->setById($request->id)->get();
         } catch (NotFoundException $th) {
-            return $this->error($th->getMessage(), 400);
+            return $this->errorNotFound($th->getMessage(), $th);
         } catch (\Exception $th) {
-            return $this->error($th->getMessage(), 400);
+            return $this->errorBadRequest($th->getMessage(), $th);
         }
-        return $this->singleItem(ItemClientResource::class, $organization);
+        return $this->singleItem(ClientItemResource::class, $item);
     }
 }
 
