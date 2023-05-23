@@ -69,7 +69,37 @@ class UfitServiceProvider extends ServiceProvider
         $kernel = $this->app['Illuminate\Contracts\Http\Kernel'];
 //        $kernel->pushMiddleware('Yk\LaravelPackageExample\App\Http\Middleware\MiddlewareExample');
         $kernel->pushMiddleware(LocaleMiddleware::class);
+        $this->loadTranslationsFrom(__DIR__.'/../lang', 'ufit_translations');
+        if ($this->app->runningInConsole()) {
+            $this->publishes([
+                __DIR__ . '/../config/ufit.php' => config_path('ufit.php'),
+            ], 'config');
+            $this->publishes([
+                __DIR__ . '/../config/schema.php' => config_path('schema.php'),
+            ], 'config');
 
+            $this->publishes([
+                __DIR__ . '/../config/database.php' => config_path('database.php'),
+            ], 'config');
+
+            // Publishing the views.
+            /*$this->publishes([
+                __DIR__.'/../resources/views' => resource_path('views/vendor/uploader'),
+            ], 'views');*/
+
+            // Publishing assets.
+            /*$this->publishes([
+                __DIR__.'/../resources/assets' => public_path('vendor/uploader'),
+            ], 'assets');*/
+
+            // Publishing the translation files.
+            /*$this->publishes([
+                __DIR__.'/../resources/lang' => resource_path('lang/vendor/uploader'),
+            ], 'lang');*/
+
+            // Registering package commands.
+            // $this->commands([]);
+        }
         /**
          * Register migrations, so they will be automatically run when the php artisan migrate command is executed.
          */

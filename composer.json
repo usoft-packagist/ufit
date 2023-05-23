@@ -6,12 +6,15 @@
         "php": ">=8.1",
         "illuminate/support": "^10.4",
         "illuminate/database": "^10.4",
-        "illuminate/http": "^10.4"
+        "illuminate/http": "^10.4",
+        "usoft/rabbit-mq": "^1.0"
     },
     "license": "MIT",
     "autoload": {
         "psr-4": {
-            "Usoft\\Ufit\\": "src/"
+            "Usoft\\Ufit\\": "src/",
+            "Usoft\\Coin\\": "src/Services",
+            "Usoft\\Models\\": "src/Models"
         }
     },
     "authors": [
