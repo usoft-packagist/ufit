@@ -22,7 +22,7 @@ abstract class ApiBaseController implements ApiController
         ], $status_code);
     }
 
-    public function paginated($resource, $items, $status_code = 200)
+    protected function paginated($resource, $items, $status_code = 200)
     {
         return response()->json([
             'pagination' => [
@@ -35,6 +35,39 @@ abstract class ApiBaseController implements ApiController
             ],
             'result' => $resource::collection($items->items())
         ], $status_code);
+    }
+
+    protected function paginateQuery($resource, $modelQuery, $status_code = 200){
+        $limit = request()->limit??10;
+        if(!(is_int($limit) || $limit > 0) || $limit > 100){
+            $limit = 25;
+        }
+        $items = $modelQuery->paginate($limit);
+        if (count($items)) {
+            return response()->json([
+                'pagination' => [
+                    'current' => $items->currentPage(),
+                    'previous' => $items->currentPage() > 1 ? $items->currentPage() - 1 : 0,
+                    'next' => $items->hasMorePages() ? $items->currentPage() + 1 : 0,
+                    'perPage' => $items->perPage(),
+                    'totalPage' => $items->lastPage(),
+                    'totalItem' => $items->total(),
+                ],
+                'result' => $resource::collection($items->items())
+            ], $status_code);
+        }else{
+            return response()->json([
+                'pagination' => [
+                    'current' => 0,
+                    'previous' => 0,
+                    'next' => 0,
+                    'perPage' => 0,
+                    'totalPage' => 0,
+                    'totalItem' => 0,
+                ],
+                'result' => []
+            ], $status_code);
+        }
     }
 
     public function noContent(){

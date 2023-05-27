@@ -67,13 +67,20 @@ abstract class Service implements ServiceInterface
     /**
      * @throws NotFoundException
      */
-    public function setById($id)
+    public function setById($data = [])
     {
-        $model = $this->getQuery()->where($this->private_key_name, $id)->first();
-        if ($model) {
-            $this->set($model);
+        if(empty($data)){
+            $data = $this->getData();
+        }
+        if(array_key_exists($this->private_key_name, $data)){
+            $model = $this->getQuery()->where($this->private_key_name, $data[$this->private_key_name])->first();
+            if ($model) {
+                $this->set($model);
+            } else {
+                throw new NotFoundException('Not found with id:' . $data[$this->private_key_name]);
+            }
         } else {
-            throw new NotFoundException('Not found with id:' . $id);
+            throw new NotFoundException('Request key not found with name:' . $this->private_key_name);
         }
         return $this;
     }
@@ -113,11 +120,15 @@ abstract class Service implements ServiceInterface
     /**
      * @throws CreateException
      */
-    public function create($data)
+    public function create($data = [])
     {
         DB::beginTransaction();
         try {
-            $this->setData($data);
+            if(empty($data)){
+                $data = $this->getData();
+            }else{
+                $this->setData($data);
+            }
             $this->beforeCreate();
             $keys = Schema::getColumnListing((new $this->model)->getTable());
             $filtered_data = array_intersect_key($data, array_flip($keys));
@@ -155,11 +166,15 @@ abstract class Service implements ServiceInterface
     /**
      * @throws UpdateException
      */
-    public function update($data)
+    public function update($data = [])
     {
         DB::beginTransaction();
         try {
-            $this->setData($data);
+            if(empty($data)){
+                $data = $this->getData();
+            }else{
+                $this->setData($data);
+            }
             $this->beforeUpdate();
             $keys = Schema::getColumnListing((new $this->model)->getTable());
             $filtered_data = array_intersect_key($data, array_flip($keys));

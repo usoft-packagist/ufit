@@ -9,8 +9,8 @@ interface ServiceInterface
     public function setPrivateKeyName(string $private_key_name);
     public function get();
     public function set(Model $model);
-    public function setById($id);
-    
+    public function setById(array $data);
+
     public function getQuery($request);
 
     public function getData();

@@ -9,9 +9,6 @@ use Illuminate\Support\Facades\Log;
 
 class LogService
 {
-    const ANSWER_SUBMIT = 'vote_answer_submit';
-    const COIN_GAINED = 'vote_coin_gained';
-    const COIN_NOT_GAINED = 'vote_coin_not_gained';
     private User $user;
     public function setUser($user)
     {

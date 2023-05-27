@@ -1,12 +1,14 @@
 <?php
 
-namespace Usoft\Ufit\Abstracts\Http;
+namespace Usoft\Ufit\Http;
 
 use Illuminate\Support\Facades\Request;
 use Usoft\Ufit\Abstracts\CrudService;
 use Usoft\Ufit\Abstracts\Exceptions\CreateException;
 use Usoft\Ufit\Abstracts\Exceptions\NotFoundException;
 use Usoft\Ufit\Abstracts\Exceptions\UpdateException;
+use Usoft\Ufit\Abstracts\Http\ApiBaseController;
+use Usoft\Ufit\Interfaces\Http\CrudBaseController;
 use Usoft\Ufit\Abstracts\Service;
 use Usoft\Ufit\Requests\DestroyRequest;
 use Usoft\Ufit\Requests\PaginationRequest;
@@ -14,9 +16,9 @@ use Usoft\Ufit\Requests\ShowRequest;
 use Usoft\Ufit\Responses\ClientItemResource;
 use Usoft\Ufit\Responses\ItemResource;
 
-abstract class CrudController extends ApiBaseController
+abstract class CrudController extends ApiBaseController implements CrudBaseController
 {
-    private Service $service;
+    protected Service $service;
     /**
      * Display a listing of the resource.
      *
@@ -33,18 +35,19 @@ abstract class CrudController extends ApiBaseController
     public function index(PaginationRequest $request)
     {
         try {
-            $items = $this->service->getQuery()->pagiante($request->limit);
+            $itemsQuery = $this->service->getQuery();
         } catch (\Exception $th) {
             return $this->errorBadRequest($th->getMessage(), $th);
         }
-        return $this->paginated($items, ItemResource::class);
+        return $this->paginateQuery($itemsQuery, ItemResource::class);
     }
 
     public function show(ShowRequest $request)
     {
         try {
             $item = $this->service
-                ->setById($request->id)
+                ->setData($request->all())
+                ->setById()
                 ->get();
         } catch (NotFoundException $th) {
             return $this->errorNotFound($th->getMessage(), $th);
@@ -63,7 +66,10 @@ abstract class CrudController extends ApiBaseController
     public function store(Request $request)
     {
         try {
-            $item = $this->service->create($request->validated())->get();
+            $item = $this->service
+                ->setData($request->all())
+                ->create()
+                ->get();
         } catch (CreateException $th) {
             return $this->errorBadRequest($th->getMessage(), $th);
         } catch (\Exception $th) {
@@ -82,8 +88,10 @@ abstract class CrudController extends ApiBaseController
     {
         try {
             $item = $this->service
-                ->setById($request->id)
-                ->update($request->validated())->get();
+                ->setData($request->all())
+                ->setById()
+                ->update()
+                ->get();
         } catch (UpdateException $th) {
             return $this->errorBadRequest($th->getMessage(), $th);
         } catch (NotFoundException $th) {
@@ -103,7 +111,10 @@ abstract class CrudController extends ApiBaseController
     public function destroy(DestroyRequest $request)
     {
         try {
-            $this->service->setById($request->id)->get()->delete();
+            $this->service
+                ->setData($request->all())
+                ->setById()
+                ->delete();
         } catch (NotFoundException $th) {
             return $this->errorNotFound($th->getMessage(), $th);
         } catch (\Exception $th) {
@@ -117,17 +128,20 @@ abstract class CrudController extends ApiBaseController
     public function findAll(PaginationRequest $request)
     {
         try {
-            $items = $this->service->getQuery()->pagiante($request->limit);
+            $itemsQuery = $this->service->getQuery();
         } catch (\Exception $th) {
             return $this->errorBadRequest($th->getMessage(), $th);
         }
-        return $this->paginated($items, ClientItemResource::class);
+        return $this->paginateQuery($itemsQuery, ClientItemResource::class);
     }
 
     public function findOne(ShowRequest $request)
     {
         try {
-            $item = $this->service->setById($request->id)->get();
+            $item = $this->service
+                ->setData($request->all())
+                ->setById()
+                ->get();
         } catch (NotFoundException $th) {
             return $this->errorNotFound($th->getMessage(), $th);
         } catch (\Exception $th) {
