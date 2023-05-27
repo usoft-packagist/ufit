@@ -3,6 +3,7 @@
 namespace Usoft\Ufit\Http;
 
 use Illuminate\Support\Facades\Request;
+use Usoft\Models\User;
 use Usoft\Ufit\Abstracts\CrudService;
 use Usoft\Ufit\Abstracts\Exceptions\CreateException;
 use Usoft\Ufit\Abstracts\Exceptions\NotFoundException;
@@ -30,7 +31,7 @@ abstract class CrudController extends ApiBaseController implements CrudBaseContr
      */
     public function __construct()
     {
-        $this->service = new CrudService();
+        $this->service = new CrudService(new User);
     }
     public function index(PaginationRequest $request)
     {
@@ -66,8 +67,9 @@ abstract class CrudController extends ApiBaseController implements CrudBaseContr
     public function store(Request $request)
     {
         try {
+            $validated = $request->validate($this->service->model->store_rules);
             $item = $this->service
-                ->setData($request->all())
+                ->setData($validated)
                 ->create()
                 ->get();
         } catch (CreateException $th) {
@@ -87,8 +89,9 @@ abstract class CrudController extends ApiBaseController implements CrudBaseContr
     public function update(Request $request)
     {
         try {
+            $validated = $request->validate($this->service->model->update_rules);
             $item = $this->service
-                ->setData($request->all())
+                ->setData($validated)
                 ->setById()
                 ->update()
                 ->get();

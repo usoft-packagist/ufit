@@ -2,8 +2,6 @@
 
 namespace Usoft\Ufit\Abstracts;
 
-
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Schema;
@@ -16,13 +14,21 @@ use Usoft\Ufit\Interfaces\ServiceInterface;
 
 abstract class Service implements ServiceInterface
 {
-    protected Model $model;
-    protected array $data;
+    public Model $model;
+    protected array $data = [];
     protected $private_key_name = 'id';
 
     protected $is_job = false;
 
     protected $query = null;
+
+    /**
+     * Class constructor.
+     */
+    public function __construct(Model $model = null)
+    {
+        $this->model = $model;
+    }
 
     public function setPrivateKeyName($private_key_name)
     {
@@ -109,6 +115,8 @@ abstract class Service implements ServiceInterface
     }
     public function beforeCreate()
     {
+        $rules = $this->model->create_rules;
+
         return $this;
     }
     public function createJob($data)
@@ -222,4 +230,6 @@ abstract class Service implements ServiceInterface
     {
         return $this;
     }
+
+
 }

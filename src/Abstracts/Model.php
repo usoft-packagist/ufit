@@ -11,4 +11,6 @@ abstract class Model extends Eloquent
 
     use HasFactory;
 
+    public array $store_rules = [];
+    public array $update_rules = [];
 }
