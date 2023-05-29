@@ -3,6 +3,7 @@
 namespace Usoft\Ufit\Http;
 
 use Illuminate\Support\Facades\Request;
+use Illuminate\Support\Facades\Validator;
 use Usoft\Models\User;
 use Usoft\Ufit\Abstracts\CrudService;
 use Usoft\Ufit\Abstracts\Exceptions\CreateException;
@@ -67,7 +68,16 @@ abstract class CrudController extends ApiBaseController implements CrudBaseContr
     public function store(Request $request)
     {
         try {
-            $validated = $request->validate($this->service->model->store_rules);
+            $store_rules = $this->service->model->store_rules;
+            if(count($store_rules)){
+                $validator = Validator::make($request->all(), $store_rules);
+                if ($validator->fails()) {
+                    return response()->json([
+                        'message' => trans('ufit_translations::'.$validator->errors()->first())
+                    ], 422);
+                }
+            }
+            $validated = $request->all();
             $item = $this->service
                 ->setData($validated)
                 ->create()
@@ -89,7 +99,16 @@ abstract class CrudController extends ApiBaseController implements CrudBaseContr
     public function update(Request $request)
     {
         try {
-            $validated = $request->validate($this->service->model->update_rules);
+            $update_rules = $this->service->model->update_rules;
+            if(count($update_rules)){
+                $validator = Validator::make($request->all(), $update_rules);
+                if ($validator->fails()) {
+                    return response()->json([
+                        'message' => trans('ufit_translations::'.$validator->errors()->first())
+                    ], 422);
+                }
+            }
+            $validated = $request->all();
             $item = $this->service
                 ->setData($validated)
                 ->setById()
