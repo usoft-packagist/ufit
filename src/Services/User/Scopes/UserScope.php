@@ -1,6 +1,6 @@
 <?php
 
-namespace Usoft\Coin\User\Scopes;
+namespace Usoft\Ufit\Services\User\Scopes;
 
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
@@ -17,7 +17,7 @@ class UserScope implements Scope
     public function apply(Builder $builder, Model $model)
     {
         // builder is the query
-        $user_id = request()->user_id??null;
+        $user_id = request()->user_id ?? null;
         if ($user_id) {
             $builder->where('user_id', $user_id);
         }

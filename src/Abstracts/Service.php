@@ -25,7 +25,7 @@ abstract class Service implements ServiceInterface
     /**
      * Class constructor.
      */
-    public function __construct(Model $model = null)
+    public function __construct(Model $model)
     {
         $this->model = $model;
     }

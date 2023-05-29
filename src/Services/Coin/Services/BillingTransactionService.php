@@ -1,10 +1,10 @@
 <?php
 
-namespace Usoft\Coin\Coin\BillingTransaction\Services;
+namespace Usoft\Ufit\Services\Coin\BillingTransaction\Services;
 
 use App\Models\BillingTransaction;
 use Carbon\Carbon;
-use Usoft\Coin\Curl\Services\CurlService;
+use Usoft\Ufit\Services\Curl\Services\CurlService;
 
 class BillingTransactionService
 {

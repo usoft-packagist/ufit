@@ -1,6 +1,6 @@
 <?php
 
-namespace Usoft\Coin\Log\Services;
+namespace Usoft\Ufit\Services\Log\Services;
 
 use Usoft\Models\User;
 use Carbon\Carbon;

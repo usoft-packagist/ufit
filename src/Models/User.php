@@ -1,8 +1,8 @@
 <?php
 
-namespace Usoft\Models;
+namespace Usoft\Ufit\Models;
 
-use Usoft\Coin\Merchant\Scopes\MerchantScope;
+use Usoft\Ufit\Services\Merchant\Scopes\MerchantScope;
 use Usoft\Ufit\Abstracts\Model;
 
 class User extends Model
@@ -19,5 +19,10 @@ class User extends Model
     protected static function booted()
     {
         static::addGlobalScope(new MerchantScope);
+    }
+
+    public function merchant()
+    {
+        return $this->belongsTo(Merchant::class);
     }
 }

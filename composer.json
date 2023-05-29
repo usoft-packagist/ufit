@@ -32,9 +32,7 @@
     "license": "MIT",
     "autoload": {
         "psr-4": {
-            "Usoft\\Ufit\\": "src/",
-            "Usoft\\Coin\\": "src/Services",
-            "Usoft\\Models\\": "src/Models"
+            "Usoft\\Ufit\\": "src/"
         }
     },
     "authors": [

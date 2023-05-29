@@ -1,8 +1,8 @@
 <?php
 
-namespace Usoft\Coin\Curl\Services;
+namespace Usoft\Ufit\Services\Curl\Services;
 
-use Usoft\Coin\Curl\Exceptions\CurlException;
+use Usoft\Ufit\Services\Curl\Exceptions\CurlException;
 
 class CurlService
 {

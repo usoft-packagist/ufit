@@ -1,6 +1,6 @@
 <?php
 
-namespace Usoft\Coin\Curl\Exceptions;
+namespace Usoft\Ufit\Services\Curl\Exceptions;
 
 use Exception;
 

@@ -1,6 +1,6 @@
 <?php
 
-namespace Usoft\Coin\Upload\Responses;
+namespace Usoft\Ufit\Services\Upload\Responses;
 
 use Illuminate\Http\Resources\Json\JsonResource;
 

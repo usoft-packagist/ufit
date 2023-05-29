@@ -1,8 +1,8 @@
 <?php
 
-namespace Usoft\Coin\Curl\Services;
+namespace Usoft\Ufit\Services\Curl\Services;
 
-use Usoft\Coin\Coin\BillingTransaction\Services\BillingTransactionService;
+use Usoft\Ufit\Services\Coin\BillingTransaction\Services\BillingTransactionService;
 use Usoft\Ufit\Abstracts\Service;
 
 
@@ -34,12 +34,12 @@ class CoinService extends Service
     public function create($data = [])
     {
         $curlService = (new CurlService())->setHeader(['Accept: */*', "Content-Type: application/json"]);
-        $data['transaction_id']=null;
+        $data['transaction_id'] = null;
         try {
             $params = [
                 'merchant_id' => (int)$data['merchant_id'],
                 'user_id' => (int)$data['user_id'],
-                'debit' => ($data['debit'])?true:false, //bu rasxod
+                'debit' => ($data['debit']) ? true : false, //bu rasxod
                 'status' => (int)$data['status'], //tolov otdi
                 'amount' => (int)$data['amount'], //amount to minus
                 'type' => $data['type'],
@@ -59,9 +59,9 @@ class CoinService extends Service
                     $params = [
                         'merchant_id' => (int)$data['merchant_id'],
                         'user_id' => (int)$data['user_id'],
-                        'debit' => ($data['debit'])?false:true, //bu rasxod
+                        'debit' => ($data['debit']) ? false : true, //bu rasxod
                         'status' => (int)$data['status'], //tolov otdi
-                        'amount' => - (int)$data['amount'], //amount to minus
+                        'amount' => -(int)$data['amount'], //amount to minus
                         'type' => $data['type'],
                         'data' => [
                             'relation_id' => $data['relation_id'],
@@ -81,8 +81,9 @@ class CoinService extends Service
     }
 
 
-    public function afterCreate(){
-        $data=$this->data;
+    public function afterCreate()
+    {
+        $data = $this->data;
         (new BillingTransactionService)->create([
             'user_id' => $data['user_id'],
             'merchant_id' => $data['user_id'],
