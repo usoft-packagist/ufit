@@ -41,7 +41,7 @@ class CrudController extends ApiBaseController implements CrudBaseController
         } catch (\Exception $th) {
             return $this->errorBadRequest($th->getMessage(), $th);
         }
-        return $this->paginateQuery($itemsQuery, ItemResource::class);
+        return $this->paginateQuery(ItemResource::class, $itemsQuery);
     }
 
     public function show(ShowRequest $request)
@@ -149,12 +149,12 @@ class CrudController extends ApiBaseController implements CrudBaseController
 
     public function findAll(PaginationRequest $request)
     {
-        try {
+        // try {
             $itemsQuery = $this->service->getQuery();
-        } catch (\Exception $th) {
-            return $this->errorBadRequest($th->getMessage(), $th);
-        }
-        return $this->paginateQuery($itemsQuery, ClientItemResource::class);
+        // } catch (\Exception $th) {
+        //     return $this->errorBadRequest($th->getMessage(), $th);
+        // }
+        return $this->paginateQuery(ClientItemResource::class, $itemsQuery);
     }
 
     public function findOne(ShowRequest $request)

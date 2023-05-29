@@ -20,4 +20,9 @@ class User extends Model
     {
         static::addGlobalScope(new MerchantScope);
     }
+
+    public function merchant()
+    {
+        return $this->belongsTo(Merchant::class);
+    }
 }

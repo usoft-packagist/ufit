@@ -15,6 +15,10 @@ abstract class Model extends Eloquent
     public array $update_rules = [];
     static array $scopes = [];
 
+    // public array $item_resource = [];
+    // public array $client_item_resource = [];
+
+
     protected static function boot()
     {
         parent::boot();
