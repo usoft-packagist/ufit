@@ -4,13 +4,13 @@ namespace Usoft\Ufit\Interfaces;
 
 interface ApiController
 {
-    public function created();
+    public function created($resource, $item);
 
-    public function accepted();
+    public function accepted($resource, $item);
 
-    public function singleItem();
+    public function singleItem($resource, $item, $status_code);
 
-    public function paginated();
+    public function paginated($resource, $items, $status_code);
 
     public function noContent();
 
