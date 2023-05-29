@@ -14,4 +14,13 @@ abstract class Model extends Eloquent
 
     public array $store_rules = [];
     public array $update_rules = [];
+    static array $scopes = [];
+
+    protected static function boot()
+    {
+        parent::boot();
+        foreach(self::$scopes as $scope){
+            static::addGlobalScope(new $scope);
+        }
+    }
 }

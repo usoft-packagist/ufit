@@ -79,7 +79,7 @@ abstract class Service implements ServiceInterface
             $data = $this->getData();
         }
         if(array_key_exists($this->private_key_name, $data)){
-            $model = $this->getQuery()->where($this->private_key_name, $data[$this->private_key_name])->first();
+            $model = $this->withoutScopes()->where($this->private_key_name, $data[$this->private_key_name])->first();
             if ($model) {
                 $this->set($model);
             } else {
@@ -231,5 +231,16 @@ abstract class Service implements ServiceInterface
         return $this;
     }
 
-
+    public function withoutScopes(array $scopes = []){
+        $new_query = $this->getQuery();
+        if(count($scopes)>0){
+            foreach($scopes as $scope){
+                $new_query = $new_query->withoutGlobalScope($scope);
+            }
+        }else{
+            $new_query->withoutGlobalScopes();
+        }
+        $this->setQuery($new_query);
+        return $this;
+    }
 }

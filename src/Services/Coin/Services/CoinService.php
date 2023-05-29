@@ -2,9 +2,7 @@
 
 namespace Usoft\Coin\Curl\Services;
 
-use Illuminate\Support\Facades\Log;
 use Usoft\Coin\Coin\BillingTransaction\Services\BillingTransactionService;
-use Usoft\Coin\Coin\Exceptions\CoinException;
 use Usoft\Ufit\Abstracts\Service;
 
 
@@ -93,70 +91,5 @@ class CoinService extends Service
             'relation_id' => $data['user_id'],
             'amount' => $data['user_id'],
         ]);
-    }
-
-    public function makePayment()
-    {
-        $order = $this->get();
-        $amount = $order->grand_total;
-        $type = Monitoring::TYPE_SHOP;
-        $data_type = Monitoring::DATA_TYPE_ORDER;
-        $curlService = (new CurlService())->setHeader(['Accept: */*', "Content-Type: application/json"]);
-        $params = [
-            'merchant_id' => (int)$order->merchant_id,
-            'user_id' => (int)$order->user_id,
-            'debit' => false, //bu rasxod
-            'status' => 1, //tolov otdi
-            'amount' => -$amount, //amount to minus
-            'type' => $type,
-            'data' => [
-                'relation_id' => $order->id,
-                'relation_type' => 'orders',
-                'type' => $data_type,
-            ],
-        ];
-        $transaction_id = null;
-        try {
-            $transaction_id = $curlService
-                ->setParams($params)
-                ->post($curlService->getUrl('billing'))
-                ->getResponse('id');
-            $this->update([
-                'payment_status' => Order::PAYMENT_STATUS_PAID
-            ]);
-        } catch (\Throwable $th) {
-            if ($transaction_id) {
-                try {
-                    $params = [
-                        'merchant_id' => (int)$order->merchant_id,
-                        'user_id' => (int)$order->user_id,
-                        'debit' => true, //bu rasxod
-                        'status' => 1, //tolov otdi
-                        'amount' => $amount, //amount to minus
-                        'type' => $type,
-                        'data' => [
-                            'relation_id' => $order->id,
-                            'relation_type' => 'orders',
-                            'type' => $data_type,
-                        ],
-                    ];
-                    $transaction_id = $curlService
-                        ->setParams($params)
-                        ->post($curlService->getUrl('billing'))
-                        ->getResponse('id');
-                } catch (\Throwable $th) {
-                }
-            }
-            throw $th;
-        }
-        (new BillingTransactionService)->create([
-            'user_id' => $order->user_id,
-            'merchant_id' => $order->merchant_id,
-            'transaction_id' => $transaction_id,
-            'relation_type' => 'orders',
-            'relation_id' => $order->id,
-            'amount' => $amount,
-        ]);
-        return $this;
     }
 }
