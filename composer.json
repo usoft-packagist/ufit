@@ -7,7 +7,8 @@
         "illuminate/support": "^10.4",
         "illuminate/database": "^10.4",
         "illuminate/http": "^10.4",
-        "usoft/rabbit-mq": "^1.0"
+        "usoft/rabbit-mq": "^1.0",
+        "genealabs/laravel-model-caching": "^0.13.4"
     },
     "license": "MIT",
     "autoload": {
