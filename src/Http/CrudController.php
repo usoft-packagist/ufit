@@ -149,11 +149,11 @@ class CrudController extends ApiBaseController implements CrudBaseController
 
     public function findAll(PaginationRequest $request)
     {
-        // try {
+        try {
             $itemsQuery = $this->service->getQuery();
-        // } catch (\Exception $th) {
-        //     return $this->errorBadRequest($th->getMessage(), $th);
-        // }
+        } catch (\Exception $th) {
+            return $this->errorBadRequest($th->getMessage(), $th);
+        }
         return $this->paginateQuery(ClientItemResource::class, $itemsQuery);
     }
 
