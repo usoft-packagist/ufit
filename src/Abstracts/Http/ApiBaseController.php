@@ -22,7 +22,7 @@ abstract class ApiBaseController implements ApiController
         ], $status_code);
     }
 
-    protected function paginated($resource, $items, $status_code = 200)
+    public function paginated($resource, $items, $status_code = 200)
     {
         return response()->json([
             'pagination' => [

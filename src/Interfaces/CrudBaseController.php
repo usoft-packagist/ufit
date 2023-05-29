@@ -1,6 +1,6 @@
 <?php
 
-namespace Usoft\Ufit\Interfaces\Http;
+namespace Usoft\Ufit\Interfaces;
 
 use Illuminate\Support\Facades\Request;
 use Usoft\Ufit\Requests\DestroyRequest;

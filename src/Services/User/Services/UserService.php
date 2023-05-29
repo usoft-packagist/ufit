@@ -1,9 +1,9 @@
 <?php
 
-namespace Usoft\Coin\User\Services;
+namespace Usoft\Ufit\Services\User\Services;
 
 use Usoft\Models\User;
-use Usoft\Coin\Curl\Services\CurlService;
+use Usoft\Ufit\Services\Curl\Services\CurlService;
 use Usoft\Ufit\Abstracts\Service;
 
 class UserService extends Service

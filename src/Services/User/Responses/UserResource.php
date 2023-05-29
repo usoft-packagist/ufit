@@ -1,9 +1,9 @@
 <?php
 
-namespace Usoft\Coin\User\Responses;
+namespace Usoft\Ufit\Services\User\Responses;
 
 use Illuminate\Http\Resources\Json\JsonResource;
-use Usoft\Coin\Upload\Responses\UploadResource;
+use Usoft\Ufit\Services\Upload\Responses\UploadResource;
 
 class UserResource extends JsonResource
 {
@@ -13,11 +13,11 @@ class UserResource extends JsonResource
     public function toArray($request)
     {
         return [
-            'id' => $this->user_id, 
+            'id' => $this->user_id,
             'first_name' => $this->first_name,
             'last_name' => $this->last_name,
             'phone' => $this->phone,
-            'avatar'=>new UploadResource($this->avatar),
+            'avatar' => new UploadResource($this->avatar),
         ];
     }
 }

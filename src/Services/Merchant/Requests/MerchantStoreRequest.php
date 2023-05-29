@@ -1,6 +1,6 @@
 <?php
 
-namespace Usoft\Coin\Merchant\Requests;
+namespace Usoft\Ufit\Services\Merchant\Requests;
 
 use Usoft\Ufit\Abstracts\Http\FormRequest;
 

@@ -1,6 +1,6 @@
 <?php
 
-namespace Usoft\Coin\Coin\Exceptions;
+namespace Usoft\Ufit\Services\Coin\Exceptions;
 
 use Exception;
 

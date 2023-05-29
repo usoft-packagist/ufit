@@ -1,6 +1,6 @@
 <?php
 
-namespace Usoft\Coin\Merchant\Responses;
+namespace Usoft\Ufit\Services\Merchant\Responses;
 
 use Illuminate\Http\Resources\Json\JsonResource;
 
@@ -16,5 +16,4 @@ class MerchantResource extends JsonResource
             'name' => $this->name
         ];
     }
-
 }

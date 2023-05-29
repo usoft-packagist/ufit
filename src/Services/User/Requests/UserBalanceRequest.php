@@ -1,6 +1,7 @@
 <?php
 
-namespace Usoft\Coin\User\Requests;
+namespace Usoft\Ufit\Services\User\Requests;
+
 use Usoft\Ufit\Abstracts\Http\FormRequest;
 
 class UserBalanceRequest extends FormRequest

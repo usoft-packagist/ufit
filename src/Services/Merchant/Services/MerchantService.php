@@ -1,6 +1,6 @@
 <?php
 
-namespace Usoft\Coin\Merchant\Services;
+namespace Usoft\Ufit\Services\Merchant\Services;
 
 use Usoft\Models\Merchant;
 use Usoft\Ufit\Abstracts\Service;

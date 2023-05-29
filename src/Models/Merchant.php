@@ -1,6 +1,6 @@
 <?php
 
-namespace Usoft\Models;
+namespace Usoft\Ufit\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;

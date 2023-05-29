@@ -1,6 +1,6 @@
 <?php
 
-namespace Usoft\Models;
+namespace Usoft\Ufit\Models;
 
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Storage;

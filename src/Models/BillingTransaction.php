@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Models;
+namespace Usoft\Ufit\Models;
 
-use Usoft\Coin\Merchant\Scopes\MerchantScope;
+use Usoft\Ufit\Services\Merchant\Scopes\MerchantScope;
 use Usoft\Ufit\Abstracts\Model;
 
 class BillingTransaction extends Model

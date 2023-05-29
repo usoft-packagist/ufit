@@ -1,11 +1,11 @@
 <?php
 
-namespace Usoft\Coin\Notification\Services;
+namespace Usoft\Ufit\Services\Notification\Services;
 
 use Illuminate\Support\Facades\Log;
-use Usoft\Coin\Curl\Services\CurlService;
-use Usoft\Coin\Notification\Exceptions\NotificationException;
-use Usoft\Coin\Notification\Jobs\StoreNotificationJob;
+use Usoft\Ufit\Services\Curl\Services\CurlService;
+use Usoft\Ufit\Services\Notification\Exceptions\NotificationException;
+use Usoft\Ufit\Services\Notification\Jobs\StoreNotificationJob;
 use Usoft\Ufit\Abstracts\Service;
 
 class NotificationService  extends Service
