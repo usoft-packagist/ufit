@@ -1,0 +1,44 @@
+version: "3.8"
+
+networks:
+    nginx_network:
+        external: true
+    internal:
+
+services:
+    ufit-app:
+        image: adhocore/phpfpm:8.1
+        container_name: ufit-app
+        working_dir: /src
+        restart: always
+        networks:
+            - internal
+            - nginx_network
+        volumes:
+            - '.:/src'
+            - './docker/php/overrides.ini:/etc/php/8.1/fpm/conf.d/99-overrides.ini'
+    ufit-nginx:
+        image: nginx:alpine
+        container_name: ufit-nginx
+        restart: always
+        working_dir: /src
+        networks:
+            - internal
+            - nginx_network
+        ports:
+            - "9049:80"
+        volumes:
+            - .:/src
+            - ./docker/nginx/ufit.conf:/etc/nginx/conf.d/default.conf
+        depends_on:
+            - ufit-app
+    ufit-composer:
+        image: composer:latest
+        container_name: ufit-composer
+        working_dir: /src
+        command: update --ignore-platform-reqs
+        volumes:
+            - .:/src
+        restart: on-failure
+        depends_on:
+            - ufit-app
