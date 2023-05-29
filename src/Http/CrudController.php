@@ -9,16 +9,16 @@ use Usoft\Ufit\Abstracts\Exceptions\CreateException;
 use Usoft\Ufit\Abstracts\Exceptions\NotFoundException;
 use Usoft\Ufit\Abstracts\Exceptions\UpdateException;
 use Usoft\Ufit\Abstracts\Http\ApiBaseController;
+use Usoft\Ufit\Abstracts\Model;
 use Usoft\Ufit\Abstracts\Service;
 use Usoft\Ufit\Interfaces\CrudBaseController;
-use Usoft\Ufit\Models\User;
 use Usoft\Ufit\Requests\DestroyRequest;
 use Usoft\Ufit\Requests\PaginationRequest;
 use Usoft\Ufit\Requests\ShowRequest;
 use Usoft\Ufit\Responses\ClientItemResource;
 use Usoft\Ufit\Responses\ItemResource;
 
-class CrudController extends ApiBaseController implements CrudBaseController
+abstract class CrudController extends ApiBaseController implements CrudBaseController
 {
     protected Service $service;
     /**
@@ -30,9 +30,9 @@ class CrudController extends ApiBaseController implements CrudBaseController
     /**
      * Class constructor.
      */
-    public function __construct()
+    public function __construct(Model $model)
     {
-        $this->service = new CrudService(new User);
+        $this->service = new CrudService($model);
     }
     public function index(PaginationRequest $request)
     {
