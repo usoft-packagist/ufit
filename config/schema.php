@@ -12,4 +12,5 @@ return [
     'upload'=>$is_schema?env('DB_UPLOAD_SCHEMA', 'upload'):'public',
     'user'=>$is_schema?env('DB_USER_SCHEMA', 'user'):'public',
     'vote'=>$is_schema?env('DB_VOTE_SCHEMA', 'vote'):'public',
+    'language'=>$is_schema?env('DB_LANGUAGE_SCHEMA', 'language'):'public',
 ];
