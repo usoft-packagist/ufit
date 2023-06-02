@@ -34,6 +34,18 @@ abstract class CrudController extends ApiBaseController implements CrudBaseContr
     {
         $this->service = new CrudService($model);
     }
+
+    public function globalValidation($request, $rules=[]){
+        if(count($rules)){
+            $validator = Validator::make($request->all(), $rules);
+            if ($validator->fails()) {
+                return response()->json([
+                    'message' => trans('ufit_translations::'.$validator->errors()->first())
+                ], 422);
+            }
+        }
+        return $request->all();
+    }
     public function index(PaginationRequest $request)
     {
         try {
@@ -68,16 +80,8 @@ abstract class CrudController extends ApiBaseController implements CrudBaseContr
     public function store(Request $request)
     {
         try {
-            $store_rules = $this->service->model->store_rules;
-            if(count($store_rules)){
-                $validator = Validator::make($request->all(), $store_rules);
-                if ($validator->fails()) {
-                    return response()->json([
-                        'message' => trans('ufit_translations::'.$validator->errors()->first())
-                    ], 422);
-                }
-            }
-            $validated = $request->all();
+            $store_rules = $this->service->storeRules();
+            $validated = $this->globalValidation($request, $store_rules);
             $item = $this->service
                 ->setData($validated)
                 ->create()
@@ -99,16 +103,8 @@ abstract class CrudController extends ApiBaseController implements CrudBaseContr
     public function update(Request $request)
     {
         try {
-            $update_rules = $this->service->model->update_rules;
-            if(count($update_rules)){
-                $validator = Validator::make($request->all(), $update_rules);
-                if ($validator->fails()) {
-                    return response()->json([
-                        'message' => trans('ufit_translations::'.$validator->errors()->first())
-                    ], 422);
-                }
-            }
-            $validated = $request->all();
+            $update_rules = $this->service->updateRules();
+            $validated = $this->globalValidation($request, $update_rules);;
             $item = $this->service
                 ->setData($validated)
                 ->setById()

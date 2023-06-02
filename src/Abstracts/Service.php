@@ -11,6 +11,10 @@ use Usoft\Ufit\Abstracts\Exceptions\UpdateException;
 use Usoft\Ufit\Abstracts\Jobs\StoreJob;
 use Usoft\Ufit\Abstracts\Jobs\UpdateJob;
 use Usoft\Ufit\Interfaces\ServiceInterface;
+use Illuminate\Support\Str;
+use Usoft\Ufit\Requests\DestroyRequest;
+use Usoft\Ufit\Requests\PaginationRequest;
+use Usoft\Ufit\Requests\ShowRequest;
 
 abstract class Service implements ServiceInterface
 {
@@ -75,10 +79,10 @@ abstract class Service implements ServiceInterface
      */
     public function setById($data = [])
     {
-        if(empty($data)){
+        if (empty($data)) {
             $data = $this->getData();
         }
-        if(array_key_exists($this->private_key_name, $data)){
+        if (array_key_exists($this->private_key_name, $data)) {
             $model = $this->withoutScopes()->where($this->private_key_name, $data[$this->private_key_name])->first();
             if ($model) {
                 $this->set($model);
@@ -132,13 +136,13 @@ abstract class Service implements ServiceInterface
     {
         DB::beginTransaction();
         try {
-            if(empty($data)){
+            if (empty($data)) {
                 $data = $this->getData();
-            }else{
+            } else {
                 $this->setData($data);
             }
             $this->beforeCreate();
-            $keys = Schema::getColumnListing((new $this->model)->getTable());
+            $keys = $this->getModelColumns();
             $filtered_data = array_intersect_key($data, array_flip($keys));
             $model = $this->model::create($filtered_data);
         } catch (\Exception $exception) {
@@ -178,13 +182,13 @@ abstract class Service implements ServiceInterface
     {
         DB::beginTransaction();
         try {
-            if(empty($data)){
+            if (empty($data)) {
                 $data = $this->getData();
-            }else{
+            } else {
                 $this->setData($data);
             }
             $this->beforeUpdate();
-            $keys = Schema::getColumnListing((new $this->model)->getTable());
+            $keys = $this->getModelColumns();
             $filtered_data = array_intersect_key($data, array_flip($keys));
             $this->get()->update($filtered_data);
         } catch (\Exception $exception) {
@@ -231,16 +235,135 @@ abstract class Service implements ServiceInterface
         return $this;
     }
 
-    public function withoutScopes(array $scopes = []){
+    public function withoutScopes(array $scopes = [])
+    {
         $new_query = $this->getQuery();
-        if(count($scopes)>0){
-            foreach($scopes as $scope){
+        if (count($scopes) > 0) {
+            foreach ($scopes as $scope) {
                 $new_query = $new_query->withoutGlobalScope($scope);
             }
-        }else{
+        } else {
             $new_query->withoutGlobalScopes();
         }
         $this->setQuery($new_query);
         return $this;
+    }
+
+    public function getModelColumns($model = null)
+    {
+        if(!$model){
+            $model=$this->model;
+        }
+        $table = (new $model)->getTable();
+        $keys = Schema::getColumnListing($table);
+        return $keys;
+    }
+
+    public function indexRules($rules = [], $replace = false){
+        if ($replace) {
+            return $rules;
+        } else {
+            $model_rules = (new PaginationRequest)->rules();
+            return array_merge($rules, $model_rules);
+        }
+    }
+
+
+    public function showRules($rules = [], $replace = false){
+        if ($replace) {
+            return $rules;
+        } else {
+            $model_rules = (new ShowRequest)->rules();
+            return array_merge($rules, $model_rules);
+        }
+    }
+
+    public function destroyRules($rules = [], $replace = false){
+        if ($replace) {
+            return $rules;
+        } else {
+            $model_rules = (new DestroyRequest)->rules();
+            return array_merge($rules, $model_rules);
+        }
+    }
+
+    public function storeRules($rules = [], $replace = false)
+    {
+        if ($replace) {
+            return $rules;
+        } else {
+            // $table = (new $this->model)->getTable();
+            $keys = $this->getModelColumns();
+            $model_rules = [];
+            $required_fields = [];
+            $exceptional_fields = ['id', 'updated_at', 'created_at', 'deleted_at'];
+            foreach ($keys as $key) {
+                // $type = Schema::getColumnType($table, $key);
+                // $model_rules[$key]='required|'.$type;
+                if (in_array($key, $exceptional_fields)) {
+                    //skip
+                    continue;
+                }
+                $rule = 'required';
+                if (in_array($key, $required_fields)) {
+                    $rule = 'required';
+                }
+                $rule = $this->getRelationRule($key, $rule);
+                $model_rules[$key] = $rule;
+            }
+            return array_merge($rules, $model_rules);
+        }
+    }
+
+    public function updateRules($rules = [], $replace = false)
+    {
+        if ($replace) {
+            return $rules;
+        } else {
+            // $table = (new $this->model)->getTable();
+            $keys = $this->getModelColumns();
+            $model_rules = [];
+            $required_fields = ['id'];
+            $exceptional_fields = ['updated_at', 'created_at', 'deleted_at'];
+            foreach ($keys as $key) {
+                // $type = Schema::getColumnType($table, $key);
+                // $model_rules[$key]='required|'.$type;
+                if (in_array($key, $exceptional_fields)) {
+                    //skip
+                    continue;
+                }
+                $rule = 'sometimes';
+                if (in_array($key, $required_fields)) {
+                    $rule = 'required';
+                }
+                $rule = $this->getRelationRule($key, $rule);
+                $model_rules[$key] = $rule;
+            }
+            return array_merge($rules, $model_rules);
+        }
+    }
+
+    private function getRelationRule($key, $rule)
+    {
+        if (str_ends_with($key, '_id')) {
+            $relation_table = Str::plural(str_replace('_id', '', $key));
+            $relation = Str::camel(str_replace('_id', '', $key));
+            if (
+                method_exists($this->model, $relation)
+                && $this->model->{Str::camel($key)}() instanceof \Illuminate\Database\Eloquent\Relations\Relation    
+            ) {
+                $relation_model = (new $this->model)->{$relation}()->getRelated();
+                $tableName = $relation_model->getTable();
+                $relation_keys = $this->getModelColumns($relation_model);
+                if(in_array($key, $relation_keys)){
+                    $rule = $rule . "|exists:{$tableName},{$key}";
+                }else{
+                    $rule = $rule . "|exists:{$tableName},id";
+                }
+            }else if (Schema::hasTable($relation_table)) {
+                $rule = $rule . "|exists:{$relation_table},id";
+            }
+        }
+        return $rule;
     }
 }

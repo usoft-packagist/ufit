@@ -10,14 +10,7 @@ abstract class Model extends Eloquent
 {
     // use Cachable;
     use HasFactory;
-
-    public array $store_rules = [];
-    public array $update_rules = [];
     static array $scopes = [];
-
-    // public array $item_resource = [];
-    // public array $client_item_resource = [];
-
 
     protected static function boot()
     {
