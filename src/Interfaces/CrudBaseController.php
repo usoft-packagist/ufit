@@ -2,7 +2,7 @@
 
 namespace Usoft\Ufit\Interfaces;
 
-use Illuminate\Support\Facades\Request;
+use Illuminate\Http\Request;
 use Usoft\Ufit\Requests\DestroyRequest;
 use Usoft\Ufit\Requests\PaginationRequest;
 use Usoft\Ufit\Requests\ShowRequest;
@@ -15,14 +15,14 @@ interface CrudBaseController
      * @param \Illuminate\Http\Request  $request
      *
      */
-    function index(PaginationRequest $request);
+    function index(Request $request);
     /**
      * Show resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
      *
      */
-    function show(ShowRequest $request);
+    function show(Request $request);
 
     /**
      * Store a newly created resource in storage.
@@ -46,7 +46,7 @@ interface CrudBaseController
      * @param  \Illuminate\Http\Request  $request
      *
      */
-    function destroy(DestroyRequest $request);
+    function destroy(Request $request);
 
     //Controller for client API
 
@@ -56,13 +56,13 @@ interface CrudBaseController
      * @param  \Illuminate\Http\Request  $request
      *
      */
-    function findAll(PaginationRequest $request);
+    function findAll(Request $request);
     /**
      * Show one information
      *
      * @param  \Illuminate\Http\Request  $request
      *
      */
-    function findOne(ShowRequest $request);
+    function findOne(Request $request);
 }
 

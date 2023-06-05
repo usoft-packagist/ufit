@@ -2,7 +2,7 @@
 
 namespace Usoft\Ufit\Http;
 
-use Illuminate\Support\Facades\Request;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Usoft\Ufit\Abstracts\CrudService;
 use Usoft\Ufit\Abstracts\Exceptions\CreateException;
@@ -39,32 +39,36 @@ abstract class CrudController extends ApiBaseController implements CrudBaseContr
         }
     }
 
-    public function globalValidation($request, $rules=[]){
+    public function globalValidation($data, $rules=[]){
         if(count($rules)){
-            $validator = Validator::make($request->all(), $rules);
+            $validator = Validator::make($data, $rules);
             if ($validator->fails()) {
                 return response()->json([
                     'message' => trans('ufit_translations::'.$validator->errors()->first())
                 ], 422);
             }
         }
-        return $request->all();
+        return $data;
     }
-    public function index(PaginationRequest $request)
+    public function index(Request $request)
     {
         try {
-            $itemsQuery = $this->service->getQuery();
+            $data = $this->globalValidation($request->all(), $this->service->indexRules());
+            $itemsQuery = $this->service
+                ->setData($data)
+                ->getQuery();
         } catch (\Exception $th) {
             return $this->errorBadRequest($th->getMessage(), $th);
         }
         return $this->paginateQuery(ItemResource::class, $itemsQuery);
     }
 
-    public function show(ShowRequest $request)
+    public function show(Request $request)
     {
         try {
+            $data = $this->globalValidation($request->all(), $this->service->showRules());
             $item = $this->service
-                ->setData($request->all())
+                ->setData($data)
                 ->setById()
                 ->get();
         } catch (NotFoundException $th) {
@@ -84,10 +88,9 @@ abstract class CrudController extends ApiBaseController implements CrudBaseContr
     public function store(Request $request)
     {
         try {
-            $store_rules = $this->service->storeRules();
-            $validated = $this->globalValidation($request, $store_rules);
+            $data = $this->globalValidation($request->all(), $this->service->storeRules());
             $item = $this->service
-                ->setData($validated)
+                ->setData($data)
                 ->create()
                 ->get();
         } catch (CreateException $th) {
@@ -107,10 +110,9 @@ abstract class CrudController extends ApiBaseController implements CrudBaseContr
     public function update(Request $request)
     {
         try {
-            $update_rules = $this->service->updateRules();
-            $validated = $this->globalValidation($request, $update_rules);;
+            $data = $this->globalValidation($request->all(), $this->service->updateRules());
             $item = $this->service
-                ->setData($validated)
+                ->setData($data)
                 ->setById()
                 ->update()
                 ->get();
@@ -130,11 +132,12 @@ abstract class CrudController extends ApiBaseController implements CrudBaseContr
      * @param  \Illuminate\Http\Request  $request
      *
      */
-    public function destroy(DestroyRequest $request)
+    public function destroy(Request $request)
     {
         try {
+            $data = $this->globalValidation($request->all(), $this->service->destroyRules());
             $this->service
-                ->setData($request->all())
+                ->setData($data)
                 ->setById()
                 ->delete();
         } catch (NotFoundException $th) {
@@ -147,21 +150,25 @@ abstract class CrudController extends ApiBaseController implements CrudBaseContr
 
     //Controller for client API
 
-    public function findAll(PaginationRequest $request)
+    public function findAll(Request $request)
     {
         try {
-            $itemsQuery = $this->service->getQuery();
+            $data = $this->globalValidation($request->all(), $this->service->indexRules());
+            $itemsQuery = $this->service
+                ->setData($data)
+                ->getQuery();
         } catch (\Exception $th) {
             return $this->errorBadRequest($th->getMessage(), $th);
         }
         return $this->paginateQuery(ClientItemResource::class, $itemsQuery);
     }
 
-    public function findOne(ShowRequest $request)
+    public function findOne(Request $request)
     {
         try {
+            $data = $this->globalValidation($request->all(), $this->service->showRules());
             $item = $this->service
-                ->setData($request->all())
+                ->setData($data)
                 ->setById()
                 ->get();
         } catch (NotFoundException $th) {
