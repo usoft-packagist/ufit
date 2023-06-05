@@ -30,9 +30,13 @@ abstract class CrudController extends ApiBaseController implements CrudBaseContr
     /**
      * Class constructor.
      */
-    public function __construct(Model $model)
+    public function __construct(Model $model, Service $service=null)
     {
-        $this->service = new CrudService($model);
+        if($service){
+            $this->service = new $service($model);
+        }else{
+            $this->service = new CrudService($model);
+        }
     }
 
     public function globalValidation($request, $rules=[]){
