@@ -254,8 +254,10 @@ abstract class Service implements ServiceInterface
         if(!$model){
             $model=$this->model;
         }
-        $table = (new $model)->getTable();
-        $keys = Schema::getColumnListing($table);
+        // $table = (new $model)->getTable();
+        // $keys = Schema::getColumnListing($table);
+        // $model = new $model();
+        $keys = $model->getConnection()->getSchemaBuilder()->getColumnListing($model->getTable());
         return $keys;
     }
 
