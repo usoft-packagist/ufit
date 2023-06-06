@@ -80,7 +80,7 @@ abstract class ApiBaseController implements ApiController
         }else{
             Log::error('MESSAGE: '.$message);
         }
-        if (Lang::has('ufit_translations::errors.'.$message)){
+        if (Lang::has('ufit_translations::errors.'.$message) || Lang::has('ufit_translations::errors.'.$message)){
             return response()->json([
                 'message'   => $this->translate('errors.'.$message),
             ], $status_code);

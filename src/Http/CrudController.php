@@ -3,18 +3,15 @@
 namespace Usoft\Ufit\Http;
 
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Validator;
 use Usoft\Ufit\Abstracts\CrudService;
 use Usoft\Ufit\Abstracts\Exceptions\CreateException;
 use Usoft\Ufit\Abstracts\Exceptions\NotFoundException;
 use Usoft\Ufit\Abstracts\Exceptions\UpdateException;
+use Usoft\Ufit\Abstracts\Exceptions\ValidationException;
 use Usoft\Ufit\Abstracts\Http\ApiBaseController;
 use Usoft\Ufit\Abstracts\Model;
 use Usoft\Ufit\Abstracts\Service;
 use Usoft\Ufit\Interfaces\CrudBaseController;
-use Usoft\Ufit\Requests\DestroyRequest;
-use Usoft\Ufit\Requests\PaginationRequest;
-use Usoft\Ufit\Requests\ShowRequest;
 use Usoft\Ufit\Responses\ClientItemResource;
 use Usoft\Ufit\Responses\ItemResource;
 
@@ -39,24 +36,16 @@ abstract class CrudController extends ApiBaseController implements CrudBaseContr
         }
     }
 
-    public function globalValidation($data, $rules=[]){
-        if(count($rules)){
-            $validator = Validator::make($data, $rules);
-            if ($validator->fails()) {
-                return response()->json([
-                    'message' => trans('ufit_translations::'.$validator->errors()->first())
-                ], 422);
-            }
-        }
-        return $data;
-    }
+    
     public function index(Request $request)
     {
         try {
-            $data = $this->globalValidation($request->all(), $this->service->indexRules());
+            $data = $this->service->globalValidation($request->all(), $this->service->indexRules());
             $itemsQuery = $this->service
                 ->setData($data)
                 ->getQuery();
+        } catch (ValidationException $th) {
+            return $this->error($th->getMessage(), $th->getCode(), $th);
         } catch (\Exception $th) {
             return $this->errorBadRequest($th->getMessage(), $th);
         }
@@ -66,11 +55,13 @@ abstract class CrudController extends ApiBaseController implements CrudBaseContr
     public function show(Request $request)
     {
         try {
-            $data = $this->globalValidation($request->all(), $this->service->showRules());
+            $data = $this->service->globalValidation($request->all(), $this->service->showRules());
             $item = $this->service
                 ->setData($data)
                 ->setById()
                 ->get();
+        } catch (ValidationException $th) {
+            return $this->error($th->getMessage(), $th->getCode(), $th);
         } catch (NotFoundException $th) {
             return $this->errorNotFound($th->getMessage(), $th);
         } catch (\Exception $th) {
@@ -88,11 +79,13 @@ abstract class CrudController extends ApiBaseController implements CrudBaseContr
     public function store(Request $request)
     {
         try {
-            $data = $this->globalValidation($request->all(), $this->service->storeRules());
+            $data = $this->service->globalValidation($request->all(), $this->service->storeRules());
             $item = $this->service
                 ->setData($data)
                 ->create()
                 ->get();
+        } catch (ValidationException $th) {
+            return $this->error($th->getMessage(), $th->getCode(), $th);
         } catch (CreateException $th) {
             return $this->errorBadRequest($th->getMessage(), $th);
         } catch (\Exception $th) {
@@ -110,12 +103,14 @@ abstract class CrudController extends ApiBaseController implements CrudBaseContr
     public function update(Request $request)
     {
         try {
-            $data = $this->globalValidation($request->all(), $this->service->updateRules());
+            $data = $this->service->globalValidation($request->all(), $this->service->updateRules());
             $item = $this->service
                 ->setData($data)
                 ->setById()
                 ->update()
                 ->get();
+        } catch (ValidationException $th) {
+            return $this->error($th->getMessage(), $th->getCode(), $th);
         } catch (UpdateException $th) {
             return $this->errorBadRequest($th->getMessage(), $th);
         } catch (NotFoundException $th) {
@@ -135,11 +130,13 @@ abstract class CrudController extends ApiBaseController implements CrudBaseContr
     public function destroy(Request $request)
     {
         try {
-            $data = $this->globalValidation($request->all(), $this->service->destroyRules());
+            $data = $this->service->globalValidation($request->all(), $this->service->destroyRules());
             $this->service
                 ->setData($data)
                 ->setById()
                 ->delete();
+        } catch (ValidationException $th) {
+            return $this->error($th->getMessage(), $th->getCode(), $th);
         } catch (NotFoundException $th) {
             return $this->errorNotFound($th->getMessage(), $th);
         } catch (\Exception $th) {
@@ -153,10 +150,12 @@ abstract class CrudController extends ApiBaseController implements CrudBaseContr
     public function findAll(Request $request)
     {
         try {
-            $data = $this->globalValidation($request->all(), $this->service->indexRules());
+            $data = $this->service->globalValidation($request->all(), $this->service->indexRules());
             $itemsQuery = $this->service
                 ->setData($data)
                 ->getQuery();
+        } catch (ValidationException $th) {
+            return $this->error($th->getMessage(), $th->getCode(), $th);
         } catch (\Exception $th) {
             return $this->errorBadRequest($th->getMessage(), $th);
         }
@@ -166,11 +165,13 @@ abstract class CrudController extends ApiBaseController implements CrudBaseContr
     public function findOne(Request $request)
     {
         try {
-            $data = $this->globalValidation($request->all(), $this->service->showRules());
+            $data = $this->service->globalValidation($request->all(), $this->service->showRules());
             $item = $this->service
                 ->setData($data)
                 ->setById()
                 ->get();
+        } catch (ValidationException $th) {
+            return $this->error($th->getMessage(), $th->getCode(), $th);
         } catch (NotFoundException $th) {
             return $this->errorNotFound($th->getMessage(), $th);
         } catch (\Exception $th) {

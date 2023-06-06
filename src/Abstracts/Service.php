@@ -12,9 +12,11 @@ use Usoft\Ufit\Abstracts\Jobs\StoreJob;
 use Usoft\Ufit\Abstracts\Jobs\UpdateJob;
 use Usoft\Ufit\Interfaces\ServiceInterface;
 use Illuminate\Support\Str;
+use Usoft\Ufit\Abstracts\Exceptions\ValidationException;
 use Usoft\Ufit\Requests\DestroyRequest;
 use Usoft\Ufit\Requests\PaginationRequest;
 use Usoft\Ufit\Requests\ShowRequest;
+use Illuminate\Support\Facades\Validator;
 
 abstract class Service implements ServiceInterface
 {
@@ -83,7 +85,7 @@ abstract class Service implements ServiceInterface
             $data = $this->getData();
         }
         if (array_key_exists($this->private_key_name, $data)) {
-            $model = $this->withoutScopes()->where($this->private_key_name, $data[$this->private_key_name])->first();
+            $model = $this->withoutScopes()->getQuery()->where($this->private_key_name, $data[$this->private_key_name])->first();
             if ($model) {
                 $this->set($model);
             } else {
@@ -367,5 +369,18 @@ abstract class Service implements ServiceInterface
             }
         }
         return $rule;
+    }
+
+    /**
+     * @throws ValidationException
+     */
+    public function globalValidation($data, $rules=[]){
+        if(count($rules)){
+            $validator = Validator::make($data, $rules);
+            if ($validator->fails()) {
+                throw new ValidationException($validator->errors()->first(), 422);
+            }
+        }
+        return $data;
     }
 }
