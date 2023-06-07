@@ -5,6 +5,9 @@ namespace Usoft\Ufit\Responses;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Str;
+use Usoft\Ufit\Services\Merchant\Responses\MerchantResource;
+use Usoft\Ufit\Services\Upload\Responses\UploadResource;
+use Usoft\Ufit\Services\User\Responses\UserResource;
 
 class ClientItemResource extends JsonResource
 {
@@ -28,14 +31,27 @@ class ClientItemResource extends JsonResource
         $attributes = $this->resource->toArray();
         foreach ($attributes as $key => $value) {
             $key = str_replace('_id', '', $key);
-
+            $method = Str::camel($key);
             if (
-                method_exists($this->resource, Str::camel($key)) &&
-                isset($this->{Str::camel($key)}) &&
-                $this->resource->{Str::camel($key)}() instanceof \Illuminate\Database\Eloquent\Relations\Relation
+                method_exists($this->resource, $method) &&
+                isset($this->{$method}) &&
+                $this->resource->{$method}() instanceof \Illuminate\Database\Eloquent\Relations\Relation
             ) {
                 unset($attributes[$key.'_id']);
-                $attributes[$key] = new ClientItemResource($this->{Str::camel($key)});
+                switch ($key){
+                    case 'upload':
+                        $attributes[$key] = new UploadResource($this->{$method});
+                        break;
+                    case 'merchant':
+                        $attributes[$key] = new MerchantResource($this->{$method});
+                        break;
+                    case 'user':
+                        $attributes[$key] = new UserResource($this->{$method});
+                        break;
+                    default:
+                        $attributes[$key] = new ClientItemResource($this->{$method});
+                }
+                $attributes[$key] = new ClientItemResource($this->{$method});
             }
 
             if(('created_at' == $key || 'updated_at' == $key) && isset($value)){

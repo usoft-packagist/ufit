@@ -12,8 +12,6 @@ use Usoft\Ufit\Abstracts\Http\ApiBaseController;
 use Usoft\Ufit\Abstracts\Model;
 use Usoft\Ufit\Abstracts\Service;
 use Usoft\Ufit\Interfaces\CrudBaseController;
-use Usoft\Ufit\Responses\ClientItemResource;
-use Usoft\Ufit\Responses\ItemResource;
 
 abstract class CrudController extends ApiBaseController implements CrudBaseController
 {
@@ -49,7 +47,7 @@ abstract class CrudController extends ApiBaseController implements CrudBaseContr
         } catch (\Exception $th) {
             return $this->errorBadRequest($th->getMessage(), $th);
         }
-        return $this->paginateQuery(ItemResource::class, $itemsQuery);
+        return $this->paginateQuery($this->service->getItemResource(), $itemsQuery);
     }
 
     public function show(Request $request)
@@ -67,7 +65,7 @@ abstract class CrudController extends ApiBaseController implements CrudBaseContr
         } catch (\Exception $th) {
             return $this->errorBadRequest($th->getMessage(), $th);
         }
-        return $this->singleItem(ItemResource::class, $item);
+        return $this->singleItem($this->service->getItemResource(), $item);
     }
 
     /**
@@ -91,7 +89,7 @@ abstract class CrudController extends ApiBaseController implements CrudBaseContr
         } catch (\Exception $th) {
             return $this->errorBadRequest($th->getMessage(), $th);
         }
-        return $this->created(ItemResource::class, $item);
+        return $this->created($this->service->getItemResource(), $item);
     }
 
     /**
@@ -118,7 +116,7 @@ abstract class CrudController extends ApiBaseController implements CrudBaseContr
         } catch (\Exception $th) {
             return $this->errorBadRequest($th->getMessage(), $th);
         }
-        return $this->accepted(ItemResource::class, $item);
+        return $this->accepted($this->service->getItemResource(), $item);
     }
 
     /**
@@ -159,7 +157,7 @@ abstract class CrudController extends ApiBaseController implements CrudBaseContr
         } catch (\Exception $th) {
             return $this->errorBadRequest($th->getMessage(), $th);
         }
-        return $this->paginateQuery(ClientItemResource::class, $itemsQuery);
+        return $this->paginateQuery($this->service->getClientItemResource(), $itemsQuery);
     }
 
     public function findOne(Request $request)
@@ -177,6 +175,6 @@ abstract class CrudController extends ApiBaseController implements CrudBaseContr
         } catch (\Exception $th) {
             return $this->errorBadRequest($th->getMessage(), $th);
         }
-        return $this->singleItem(ClientItemResource::class, $item);
+        return $this->singleItem($this->service->getClientItemResource(), $item);
     }
 }

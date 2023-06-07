@@ -17,6 +17,8 @@ use Usoft\Ufit\Requests\DestroyRequest;
 use Usoft\Ufit\Requests\PaginationRequest;
 use Usoft\Ufit\Requests\ShowRequest;
 use Illuminate\Support\Facades\Validator;
+use Usoft\Ufit\Responses\ClientItemResource;
+use Usoft\Ufit\Responses\ItemResource;
 
 abstract class Service implements ServiceInterface
 {
@@ -27,13 +29,16 @@ abstract class Service implements ServiceInterface
     protected $is_job = false;
 
     protected $query = null;
-
+    protected $resource = null;
+    protected $client_resource = null;
     /**
      * Class constructor.
      */
-    public function __construct(Model $model)
+    public function __construct(Model $model, $resource=null, $client_resource=null)
     {
         $this->model = $model;
+        $this->resource = (isset($resource))?$resource:ItemResource::class;
+        $this->client_resource = (isset($client_resource))?$client_resource:ClientItemResource::class;
     }
 
     public function setPrivateKeyName($private_key_name)
@@ -354,15 +359,16 @@ abstract class Service implements ServiceInterface
             $relation = Str::camel(str_replace('_id', '', $key));
             if (
                 method_exists($this->model, $relation)
-                && $this->model->{Str::camel($key)}() instanceof \Illuminate\Database\Eloquent\Relations\Relation    
+                && $this->model->{$relation}() instanceof \Illuminate\Database\Eloquent\Relations\Relation
             ) {
                 $relation_model = (new $this->model)->{$relation}()->getRelated();
                 $tableName = $relation_model->getTable();
+                $schema = $relation_model->getConnectionName();
                 $relation_keys = $this->getModelColumns($relation_model);
                 if(in_array($key, $relation_keys)){
-                    $rule = $rule . "|exists:{$tableName},{$key}";
+                    $rule = $rule . "|exists:{$schema}.{$tableName},{$key}";
                 }else{
-                    $rule = $rule . "|exists:{$tableName},id";
+                    $rule = $rule . "|exists:{$schema}.{$tableName},id";
                 }
             }else if (Schema::hasTable($relation_table)) {
                 $rule = $rule . "|exists:{$relation_table},id";
@@ -383,4 +389,13 @@ abstract class Service implements ServiceInterface
         }
         return $data;
     }
+
+    public function getItemResource(){
+        return $this->resource;
+    }
+
+    public function getClientItemResource(){
+        return $this->client_resource;
+    }
+
 }
