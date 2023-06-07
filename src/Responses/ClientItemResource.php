@@ -51,7 +51,6 @@ class ClientItemResource extends JsonResource
                     default:
                         $attributes[$key] = new ClientItemResource($this->{$method});
                 }
-                $attributes[$key] = new ClientItemResource($this->{$method});
             }
 
             if(('created_at' == $key || 'updated_at' == $key) && isset($value)){
