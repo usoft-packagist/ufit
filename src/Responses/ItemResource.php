@@ -49,7 +49,7 @@ class ItemResource extends JsonResource
                         $attributes[$key] = new UserResource($this->{$method});
                         break;
                     default:
-                        $attributes[$key] = new ClientItemResource($this->{$method});
+                        $attributes[$key] = new ItemResource($this->{$method});
                 }
             }
 

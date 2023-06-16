@@ -39,11 +39,11 @@ abstract class ApiBaseController implements ApiController
 
     protected function paginateQuery($resource, $modelQuery, $status_code = 200){
         $limit = request()->limit??10;
-        if(!(is_int($limit) || $limit > 0) || $limit > 100){
-            $limit = 25;
-        }
+        // if(!(is_int($limit) || $limit > 0) || $limit > 100){
+        //     $limit = 25;
+        // }
         $items = $modelQuery->paginate($limit);
-        if (count($items)) {
+        // if (count($items)) {
             return response()->json([
                 'pagination' => [
                     'current' => $items->currentPage(),
@@ -55,19 +55,19 @@ abstract class ApiBaseController implements ApiController
                 ],
                 'result' => $resource::collection($items->items())
             ], $status_code);
-        }else{
-            return response()->json([
-                'pagination' => [
-                    'current' => 0,
-                    'previous' => 0,
-                    'next' => 0,
-                    'perPage' => 0,
-                    'totalPage' => 0,
-                    'totalItem' => 0,
-                ],
-                'result' => []
-            ], $status_code);
-        }
+        // }else{
+        //     return response()->json([
+        //         'pagination' => [
+        //             'current' => 0,
+        //             'previous' => 0,
+        //             'next' => 0,
+        //             'perPage' => 0,
+        //             'totalPage' => 0,
+        //             'totalItem' => 0,
+        //         ],
+        //         'result' => []
+        //     ], $status_code);
+        // }
     }
 
     public function noContent(){

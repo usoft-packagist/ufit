@@ -273,7 +273,7 @@ abstract class Service implements ServiceInterface
             return $rules;
         } else {
             $model_rules = (new PaginationRequest)->rules();
-            return array_merge($rules, $model_rules);
+            return array_merge($model_rules, $rules);
         }
     }
 
@@ -283,7 +283,7 @@ abstract class Service implements ServiceInterface
             return $rules;
         } else {
             $model_rules = (new ShowRequest)->rules();
-            return array_merge($rules, $model_rules);
+            return array_merge($model_rules, $rules);
         }
     }
 
@@ -292,7 +292,7 @@ abstract class Service implements ServiceInterface
             return $rules;
         } else {
             $model_rules = (new DestroyRequest)->rules();
-            return array_merge($rules, $model_rules);
+            return array_merge($model_rules, $rules);
         }
     }
 
@@ -320,7 +320,7 @@ abstract class Service implements ServiceInterface
                 $rule = $this->getRelationRule($key, $rule);
                 $model_rules[$key] = $rule;
             }
-            return array_merge($rules, $model_rules);
+            return array_merge($model_rules, $rules);
         }
     }
 
@@ -348,7 +348,7 @@ abstract class Service implements ServiceInterface
                 $rule = $this->getRelationRule($key, $rule);
                 $model_rules[$key] = $rule;
             }
-            return array_merge($rules, $model_rules);
+            return array_merge($model_rules, $rules);
         }
     }
 

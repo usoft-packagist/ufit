@@ -5,7 +5,7 @@ namespace Usoft\Ufit\Services\Merchant\Scopes;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Scope;
-use Usoft\Models\Merchant;
+use Usoft\Ufit\Models\Merchant;
 
 class MerchantScope implements Scope
 {
