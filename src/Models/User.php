@@ -25,4 +25,14 @@ class User extends Model
     {
         return $this->belongsTo(Merchant::class);
     }
+
+    public function upload()
+    {
+        return $this->belongsTo(Upload::class);
+    }
+
+    public function avatar()
+    {
+        return $this->belongsTo(Upload::class);
+    }
 }
