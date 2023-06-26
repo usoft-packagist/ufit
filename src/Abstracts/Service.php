@@ -398,4 +398,12 @@ abstract class Service implements ServiceInterface
         return $this->client_resource;
     }
 
+    public function setItemResource($resource){
+        return $this->resource = $resource;
+    }
+
+    public function setClientItemResource($client_resource){
+        return $this->client_resource = $client_resource;
+    }
+
 }
