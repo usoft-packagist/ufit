@@ -28,11 +28,11 @@ class User extends Model
 
     public function upload()
     {
-        return $this->belongsTo(Upload::class);
+        return $this->belongsTo(Upload::class, 'upload_id');
     }
 
     public function avatar()
     {
-        return $this->belongsTo(Upload::class);
+        return $this->belongsTo(Upload::class, 'upload_id');
     }
 }
