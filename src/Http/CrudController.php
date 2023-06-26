@@ -148,7 +148,7 @@ abstract class CrudController extends ApiBaseController implements CrudBaseContr
     public function findAll(Request $request)
     {
         try {
-            $data = $this->service->globalValidation($request->all(), $this->service->indexRules());
+            $data = $this->service->globalValidation($request->all(), $this->service->findAllRules());
             $itemsQuery = $this->service
                 ->setData($data)
                 ->getQuery();
@@ -163,7 +163,7 @@ abstract class CrudController extends ApiBaseController implements CrudBaseContr
     public function findOne(Request $request)
     {
         try {
-            $data = $this->service->globalValidation($request->all(), $this->service->showRules());
+            $data = $this->service->globalValidation($request->all(), $this->service->findOneRules());
             $item = $this->service
                 ->setData($data)
                 ->setById()

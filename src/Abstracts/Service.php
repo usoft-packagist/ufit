@@ -34,11 +34,11 @@ abstract class Service implements ServiceInterface
     /**
      * Class constructor.
      */
-    public function __construct(Model $model, $resource=null, $client_resource=null)
+    public function __construct(Model $model, $resource = null, $client_resource = null)
     {
         $this->model = $model;
-        $this->resource = (isset($resource))?$resource:ItemResource::class;
-        $this->client_resource = (isset($client_resource))?$client_resource:ClientItemResource::class;
+        $this->resource = (isset($resource)) ? $resource : ItemResource::class;
+        $this->client_resource = (isset($client_resource)) ? $client_resource : ClientItemResource::class;
     }
 
     public function setPrivateKeyName($private_key_name)
@@ -65,7 +65,8 @@ abstract class Service implements ServiceInterface
 
     public function setQuery($query)
     {
-        return $this->query = $query;
+        $this->query = $query;
+        return $this;
     }
 
     /**
@@ -258,8 +259,8 @@ abstract class Service implements ServiceInterface
 
     public function getModelColumns($model = null)
     {
-        if(!$model){
-            $model=$this->model;
+        if (!$model) {
+            $model = $this->model;
         }
         // $table = (new $model)->getTable();
         // $keys = Schema::getColumnListing($table);
@@ -268,7 +269,8 @@ abstract class Service implements ServiceInterface
         return $keys;
     }
 
-    public function indexRules($rules = [], $replace = false){
+    public function indexRules($rules = [], $replace = false)
+    {
         if ($replace) {
             return $rules;
         } else {
@@ -278,7 +280,8 @@ abstract class Service implements ServiceInterface
     }
 
 
-    public function showRules($rules = [], $replace = false){
+    public function showRules($rules = [], $replace = false)
+    {
         if ($replace) {
             return $rules;
         } else {
@@ -287,7 +290,29 @@ abstract class Service implements ServiceInterface
         }
     }
 
-    public function destroyRules($rules = [], $replace = false){
+    public function findAllRules($rules = [], $replace = false)
+    {
+        if ($replace) {
+            return $rules;
+        } else {
+            $model_rules = (new PaginationRequest)->rules();
+            return array_merge($model_rules, $rules);
+        }
+    }
+
+
+    public function findOneRules($rules = [], $replace = false)
+    {
+        if ($replace) {
+            return $rules;
+        } else {
+            $model_rules = (new ShowRequest)->rules();
+            return array_merge($model_rules, $rules);
+        }
+    }
+
+    public function destroyRules($rules = [], $replace = false)
+    {
         if ($replace) {
             return $rules;
         } else {
@@ -365,12 +390,12 @@ abstract class Service implements ServiceInterface
                 $tableName = $relation_model->getTable();
                 $schema = $relation_model->getConnectionName();
                 $relation_keys = $this->getModelColumns($relation_model);
-                if(in_array($key, $relation_keys)){
+                if (in_array($key, $relation_keys)) {
                     $rule = $rule . "|exists:{$schema}.{$tableName},{$key}";
-                }else{
+                } else {
                     $rule = $rule . "|exists:{$schema}.{$tableName},id";
                 }
-            }else if (Schema::hasTable($relation_table)) {
+            } else if (Schema::hasTable($relation_table)) {
                 $rule = $rule . "|exists:{$relation_table},id";
             }
         }
@@ -380,8 +405,9 @@ abstract class Service implements ServiceInterface
     /**
      * @throws ValidationException
      */
-    public function globalValidation($data, $rules=[]){
-        if(count($rules)){
+    public function globalValidation($data, $rules = [])
+    {
+        if (count($rules)) {
             $validator = Validator::make($data, $rules);
             if ($validator->fails()) {
                 throw new ValidationException($validator->errors()->first(), 422);
@@ -390,20 +416,25 @@ abstract class Service implements ServiceInterface
         return $data;
     }
 
-    public function getItemResource(){
+    public function getItemResource()
+    {
         return $this->resource;
     }
 
-    public function getClientItemResource(){
+    public function getClientItemResource()
+    {
         return $this->client_resource;
     }
 
-    public function setItemResource($resource){
-        return $this->resource = $resource;
+    public function setItemResource($resource)
+    {
+        $this->resource = $resource;
+        return $this;
     }
 
-    public function setClientItemResource($client_resource){
-        return $this->client_resource = $client_resource;
+    public function setClientItemResource($client_resource)
+    {
+        $this->client_resource = $client_resource;
+        return $this;
     }
-
 }
