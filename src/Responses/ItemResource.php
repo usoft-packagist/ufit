@@ -52,10 +52,24 @@ class ItemResource extends JsonResource
                         $attributes[$key] = new ItemResource($this->{$method});
                 }
             }
-
-            if(('created_at' == $key || 'updated_at' == $key) && isset($value)){
-                $attributes[$key] = Carbon::parse($attributes[$key])->format('Y-m-d H:i:s');
+            
+            switch ($key) {
+                case 'created_at':
+                case 'updated_at':
+                case 'deleted_at':
+                    if(isset($value)){
+                        $attributes[$key] = Carbon::parse($attributes[$key])->format('Y-m-d H:i:s');
+                    }
+                    break;
+                case 'date':
+                    if(isset($value) && is_int($value)){
+                        $attributes[$key] = date("Y-m-d H:i:s", $value);
+                    }
+                    break;
+                default:
+                    break;
             }
+            
         }
 
         return $attributes;

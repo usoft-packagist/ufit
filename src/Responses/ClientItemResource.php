@@ -53,8 +53,45 @@ class ClientItemResource extends JsonResource
                 }
             }
 
-            if(('created_at' == $key || 'updated_at' == $key) && isset($value)){
-                $attributes[$key] = Carbon::parse($attributes[$key])->format('Y-m-d H:i:s');
+            switch ($key) {
+                case 'title':
+                case 'subtile':
+                case 'name':
+                case 'description':
+                case 'hint':
+                case 'button':
+                case 'buttons':
+                    $locale = app()->getLocale()??config('app.locale', 'uz');
+                    if(is_array($attributes[$key])){
+                        if(array_key_exists($locale, $attributes[$key])){
+                            $attributes[$key]=$attributes[$key][$locale];
+                        }else{
+                            $translatable_keys = ['name', 'title', 'subtitle', 'description', 'hint'];
+                            foreach($translatable_keys as $translatable_key){
+                                if(array_key_exists($translatable_key, $attributes[$key])){
+                                    if(is_array($attributes[$key][$translatable_key]) && array_key_exists($locale, $attributes[$key][$translatable_key])){
+                                        $attributes[$key][$translatable_key]=$attributes[$key][$translatable_key][$locale];
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    break;
+                case 'created_at':
+                case 'updated_at':
+                case 'deleted_at':
+                    if(isset($value)){
+                        $attributes[$key] = Carbon::parse($attributes[$key])->format('Y-m-d H:i:s');
+                    }
+                    break;
+                
+                case 'date':
+                    if(isset($value) && is_int($value)){
+                        $attributes[$key] = date("Y-m-d H:i:s", $value);
+                    }
+                    break;
+                default:
+                    break;
             }
         }
 

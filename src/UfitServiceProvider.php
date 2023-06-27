@@ -4,6 +4,7 @@ namespace Usoft\Ufit;
 
 use Illuminate\Support\ServiceProvider;
 use Usoft\Ufit\Middlewares\LocaleMiddleware;
+use Usoft\Ufit\Middlewares\TimezoneMiddleware;
 
 class UfitServiceProvider extends ServiceProvider
 {
@@ -69,6 +70,7 @@ class UfitServiceProvider extends ServiceProvider
         $kernel = $this->app['Illuminate\Contracts\Http\Kernel'];
 //        $kernel->pushMiddleware('Yk\LaravelPackageExample\App\Http\Middleware\MiddlewareExample');
         $kernel->pushMiddleware(LocaleMiddleware::class);
+        $kernel->pushMiddleware(TimezoneMiddleware::class);
         $this->loadTranslationsFrom(__DIR__.'/../lang', 'ufit_translations');
         if ($this->app->runningInConsole()) {
             $this->publishes([
