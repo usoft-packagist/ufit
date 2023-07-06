@@ -57,13 +57,17 @@ class ItemResource extends JsonResource
                 case 'created_at':
                 case 'updated_at':
                 case 'deleted_at':
-                    if(isset($value)){
-                        $attributes[$key] = Carbon::parse($attributes[$key])->format('Y-m-d H:i:s');
-                    }
-                    break;
+                case 'start_date':
+                case 'end_date':
+                case 'from_date':
+                case 'to_date':
                 case 'date':
-                    if(isset($value) && is_int($value)){
-                        $attributes[$key] = date("Y-m-d H:i:s", $value);
+                    if(isset($value)){
+                        if(is_int($value)){
+                            $attributes[$key] = Carbon::parse(date("Y-m-d H:i:s", $value), 'UTC')->setTimezone(date_default_timezone_get())->format('Y-m-d H:i:s');
+                        }else{
+                            $attributes[$key] = Carbon::parse($attributes[$key], 'UTC')->setTimezone(date_default_timezone_get())->format('Y-m-d H:i:s');
+                        }
                     }
                     break;
                 default:
