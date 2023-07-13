@@ -48,7 +48,7 @@ abstract class ApiBaseController implements ApiController
         $limit = request()->limit ?? 10;
         $data = request()->all();
         ksort($data);
-        $item_key = get_class($resource) . ":" . $modelTableName . ":" . serialize($data);
+        $item_key = request()->path() . ":" . $modelTableName . ":" . serialize($data);
         $items = Cache::tags([$modelTableName])
             ->remember(
                 $item_key,
