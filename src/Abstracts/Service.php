@@ -2,6 +2,8 @@
 
 namespace Usoft\Ufit\Abstracts;
 
+use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Schema;
@@ -91,7 +93,16 @@ abstract class Service implements ServiceInterface
             $data = $this->getData();
         }
         if (array_key_exists($this->private_key_name, $data)) {
-            $model = $this->withoutScopes()->getQuery()->where($this->private_key_name, $data[$this->private_key_name])->first();
+            ksort($data);
+            $item_key = $this->getModelTableName() . ':' . serialize($data);
+            $model = Cache::tags([$this->getModelTableName()])
+                ->remember(
+                    $item_key,
+                    Carbon::now()->addDay(),
+                    function () use ($data) {
+                        return $this->withoutScopes()->getQuery()->where($this->private_key_name, $data[$this->private_key_name])->first();
+                    }
+                );
             if ($model) {
                 $this->set($model);
             } else {
@@ -170,6 +181,7 @@ abstract class Service implements ServiceInterface
 
     public function afterCreate()
     {
+        Cache::tags($this->getModelTableName())->flush();
         return $this;
     }
     public function beforeUpdate()
@@ -214,6 +226,7 @@ abstract class Service implements ServiceInterface
     }
     public function afterUpdate()
     {
+        Cache::tags($this->getModelTableName())->flush();
         return $this;
     }
 
@@ -240,6 +253,7 @@ abstract class Service implements ServiceInterface
     }
     public function afterDelete()
     {
+        Cache::tags($this->getModelTableName())->flush();
         return $this;
     }
 
@@ -262,10 +276,7 @@ abstract class Service implements ServiceInterface
         if (!$model) {
             $model = $this->model;
         }
-        // $table = (new $model)->getTable();
-        // $keys = Schema::getColumnListing($table);
-        // $model = new $model();
-        $keys = $model->getConnection()->getSchemaBuilder()->getColumnListing($model->getTable());
+        $keys = $model->getConnection()->getSchemaBuilder()->getColumnListing($this->getModelTableName($model));
         return $keys;
     }
 
@@ -326,7 +337,6 @@ abstract class Service implements ServiceInterface
         if ($replace) {
             return $rules;
         } else {
-            // $table = (new $this->model)->getTable();
             $keys = $this->getModelColumns();
             $model_rules = [];
             $required_fields = [];
@@ -354,7 +364,6 @@ abstract class Service implements ServiceInterface
         if ($replace) {
             return $rules;
         } else {
-            // $table = (new $this->model)->getTable();
             $keys = $this->getModelColumns();
             $model_rules = [];
             $required_fields = ['id'];
@@ -387,7 +396,7 @@ abstract class Service implements ServiceInterface
                 && $this->model->{$relation}() instanceof \Illuminate\Database\Eloquent\Relations\Relation
             ) {
                 $relation_model = (new $this->model)->{$relation}()->getRelated();
-                $tableName = $relation_model->getTable();
+                $tableName = $this->getModelTableName($relation_model);
                 $schema = $relation_model->getConnectionName();
                 $relation_keys = $this->getModelColumns($relation_model);
                 if (in_array($key, $relation_keys)) {
@@ -436,5 +445,13 @@ abstract class Service implements ServiceInterface
     {
         $this->client_resource = $client_resource;
         return $this;
+    }
+
+    public function getModelTableName($model = null)
+    {
+        if (!$model) {
+            $model = $this->model;
+        }
+        return $model->getTable();
     }
 }

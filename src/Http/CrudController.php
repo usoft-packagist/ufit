@@ -25,16 +25,16 @@ abstract class CrudController extends ApiBaseController implements CrudBaseContr
     /**
      * Class constructor.
      */
-    public function __construct(Model $model, Service $service=null)
+    public function __construct(Model $model, Service $service = null)
     {
-        if($service){
+        if ($service) {
             $this->service = new $service($model);
-        }else{
+        } else {
             $this->service = new CrudService($model);
         }
     }
 
-    
+
     public function index(Request $request)
     {
         try {
@@ -47,7 +47,7 @@ abstract class CrudController extends ApiBaseController implements CrudBaseContr
         } catch (\Exception $th) {
             return $this->errorBadRequest($th->getMessage(), $th);
         }
-        return $this->paginateQuery($this->service->getItemResource(), $itemsQuery);
+        return $this->paginateQuery($this->service->getItemResource(), $itemsQuery, $this->service->getModelTableName());
     }
 
     public function show(Request $request)
@@ -65,7 +65,7 @@ abstract class CrudController extends ApiBaseController implements CrudBaseContr
         } catch (\Exception $th) {
             return $this->errorBadRequest($th->getMessage(), $th);
         }
-        return $this->singleItem($this->service->getItemResource(), $item);
+        return $this->singleItem($this->service->getItemResource(), $item, $this->service->getModelTableName());
     }
 
     /**
