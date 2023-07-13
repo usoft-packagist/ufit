@@ -21,14 +21,14 @@ abstract class ApiBaseController implements ApiController
         return $this->singleItem($resource, $item, 202);
     }
 
-    public function singleItem($resource, $item, $status_code = 200, $modelTableName = '')
+    public function singleItem($resource, $item, $status_code = 200)
     {
         return response()->json([
             "result" => new $resource($item)
         ], $status_code);
     }
 
-    public function paginated($resource, $items, $status_code = 200, $modelTableName = '')
+    public function paginated($resource, $items, $status_code = 200)
     {
         return response()->json([
             'pagination' => [
@@ -43,7 +43,7 @@ abstract class ApiBaseController implements ApiController
         ], $status_code);
     }
 
-    protected function paginateQuery($resource, $modelQuery, $status_code = 200, $modelTableName = '')
+    protected function paginateQuery($resource, $modelQuery, $modelTableName = '', $status_code = 200)
     {
         $limit = request()->limit ?? 10;
         $data = request()->all();
