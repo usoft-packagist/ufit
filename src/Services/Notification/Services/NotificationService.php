@@ -10,8 +10,8 @@ use Usoft\Ufit\Abstracts\Service;
 
 class NotificationService  extends Service
 {
-    private CurlService $curlService;
-    private array $data;
+    protected CurlService $curlService;
+    protected array $data;
 
     const TYPE_ORDER = 'orders';
     const TYPE_PURCHASE = 'products_users';

@@ -22,7 +22,7 @@ class StoreJob implements ShouldQueue, ShouldBeUnique
      * @param array $data
      * @return void
      */
-    public function __construct(array $data, Service $service = Service::class)
+    public function __construct(array $data, Service $service)
     {
         $this->service = new $service;
         $this->data = $data;
