@@ -421,6 +421,7 @@ abstract class Service implements ServiceInterface
             if ($validator->fails()) {
                 throw new ValidationException($validator->errors()->first(), 422);
             }
+            $data = $validator->validated();
         }
         return $data;
     }

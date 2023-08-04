@@ -70,9 +70,16 @@ abstract class ApiBaseController implements ApiController
         ], $status_code);
     }
 
+    public function success($message='Success', $status_code = 200)
+    {
+        return response()->json([
+            'message'=>__($message)
+        ], $status_code);
+    }
+
     public function noContent()
     {
-        return abort(204);
+        return response()->noContent();
     }
 
     public function error($message, $status_code = 400, $exception = null)
