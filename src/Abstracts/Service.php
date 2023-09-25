@@ -33,6 +33,7 @@ abstract class Service implements ServiceInterface
     protected $query = null;
     protected $resource = null;
     protected $client_resource = null;
+    protected $is_cacheable = true;
     /**
      * Class constructor.
      */
@@ -46,6 +47,17 @@ abstract class Service implements ServiceInterface
     public function setPrivateKeyName($private_key_name)
     {
         $this->private_key_name = $private_key_name;
+        return $this;
+    }
+
+    public function getIsCacheable()
+    {
+        return $this->is_cacheable;
+    }
+
+    public function setIsCacheable($is_cacheable = true)
+    {
+        $this->is_cacheable = $is_cacheable;
         return $this;
     }
 
@@ -95,7 +107,9 @@ abstract class Service implements ServiceInterface
         if (array_key_exists($this->private_key_name, $data)) {
             ksort($data);
             $item_key = $this->getModelTableName() . ':' . serialize($data);
-            $model = Cache::tags([$this->getModelTableName()])
+            
+            if($this->getIsCacheable()){
+                $model = Cache::tags([$this->getModelTableName()])
                 ->remember(
                     $item_key,
                     Carbon::now()->addDay(),
@@ -103,6 +117,9 @@ abstract class Service implements ServiceInterface
                         return $this->withoutScopes()->getQuery()->where($this->private_key_name, $data[$this->private_key_name])->first();
                     }
                 );
+            }else{
+                $model = $this->withoutScopes()->getQuery()->where($this->private_key_name, $data[$this->private_key_name])->first();
+            }
             if ($model) {
                 $this->set($model);
             } else {
@@ -180,8 +197,10 @@ abstract class Service implements ServiceInterface
     }
 
     public function afterCreate()
-    {
-        Cache::tags($this->getModelTableName())->flush();
+    {        
+        if($this->getIsCacheable()){
+            Cache::tags($this->getModelTableName())->flush();
+        }
         return $this;
     }
     public function beforeUpdate()
@@ -225,8 +244,10 @@ abstract class Service implements ServiceInterface
         return $this;
     }
     public function afterUpdate()
-    {
-        Cache::tags($this->getModelTableName())->flush();
+    {        
+        if($this->getIsCacheable()){
+            Cache::tags($this->getModelTableName())->flush();
+        }
         return $this;
     }
 
@@ -252,8 +273,10 @@ abstract class Service implements ServiceInterface
         return $this;
     }
     public function afterDelete()
-    {
-        Cache::tags($this->getModelTableName())->flush();
+    {        
+        if($this->getIsCacheable()){
+            Cache::tags($this->getModelTableName())->flush();
+        }
         return $this;
     }
 
